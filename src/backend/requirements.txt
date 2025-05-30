@@ -1,3 +1,4 @@
 fastapi==0.115.12
 ruff==0.11.11
 fastapi[standard]==0.115.12
+sqlalchemy==2.0.41

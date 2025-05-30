@@ -1,8 +1,9 @@
 import os
 import string
 import secrets
+from uuid import uuid4
 import datetime
-from database import Database
+from database.main import Database
 from typing import Union, Dict, List, Optional, Any
 import data.utils as utils
 
@@ -70,9 +71,10 @@ class Server:
 
         self.last_created = current_time
 
-        uuid = self.generate_unique_string()
+        uuid = str(uuid4())  # Generate a unique 8-character alphanumeric string
+        print(f"Generated UUID: {uuid}, type of UUID: {type(uuid)}")
 
-        if uuid is not str:
+        if not isinstance(uuid, str):
             return utils.Error(500, "Could not create new unique ID in maximal iterations. Possibly all tournament ID slots are filled with content.")
 
         # Create the tournament database file
@@ -152,13 +154,14 @@ class Server:
         try:
             # List all files in the database path
             utils.DATABASE_PATH.mkdir(parents=True, exist_ok=True)
+            print(os.listdir(utils.DATABASE_PATH))
             for file in os.listdir(utils.DATABASE_PATH):
 
-                # Check if the file is a valid database file (ends with .db and has 8-character UUID)
-                if file.endswith(".db") and len(file) == 11:
+                # Check if the file is a valid database file (ends with .db)
+                if file.endswith(".db"):
                     uuid = file[:-3]  # Remove the ".db" extension
                     config_data = self.database.get_config(uuid)
-
+                    print(f"Config data for {uuid}: {config_data}")
                     # Only add to the list if config data is valid and not empty
                     if config_data is not None and isinstance(config_data, list):
                         data = config_data[0]
